@@ -9,20 +9,62 @@ class ProductDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final id = ModalRoute.of(context)!.settings.arguments as String;
+    final product =
+        Provider.of<Products>(context, listen: false).getProductById(id);
+
     return Consumer<Products>(
       builder: (context, products, child) {
         final product = products.getProductById(id);
         return Scaffold(
           appBar: AppBar(
             title: Text(product.title),
-            actions: [
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.more_vert_rounded)),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.shopping_cart))
-            ],
           ),
-          body: const Text('Hello World'),
+          body: SingleChildScrollView(
+            child: Column(children: [
+              Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                margin: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.title,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          product.description,
+                          style: const TextStyle(
+                            color: Colors.black87,
+                          ),
+                        )
+                      ],
+                    ),
+                    Chip(
+                      label: Text(
+                        '\$${product.price}',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    )
+                  ],
+                ),
+              )
+            ]),
+          ),
         );
       },
     );
