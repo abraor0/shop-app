@@ -13,16 +13,17 @@ class ProductDetailScreen extends StatelessWidget {
       builder: (context, products, child) {
         final product = products.getProductById(id);
         return Scaffold(
-        appBar: AppBar(
-          title: Text(product.title),
-          actions: [
-            IconButton(
-                onPressed: () {}, icon: const Icon(Icons.more_vert_rounded)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart))
-          ],
-        ),
-        body: const Text('Hello World'),
-      ),
+          appBar: AppBar(
+            title: Text(product.title),
+            actions: [
+              IconButton(
+                  onPressed: () {}, icon: const Icon(Icons.more_vert_rounded)),
+              IconButton(
+                  onPressed: () {}, icon: const Icon(Icons.shopping_cart))
+            ],
+          ),
+          body: const Text('Hello World'),
+        );
       },
     );
     ;

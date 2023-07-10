@@ -1,4 +1,4 @@
-import './models/product_model.dart';
+import 'providers/product.dart';
 
 var products = [
   Product(
