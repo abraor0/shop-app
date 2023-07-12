@@ -32,6 +32,11 @@ class MainDrawer extends StatelessWidget {
           leading: Icon(Icons.payment),
           onTap: () => Navigator.of(context).pushReplacementNamed('/orders'),
         ),
+        ListTile(
+          title: Text('Manage Products'),
+          leading: Icon(Icons.edit),
+          onTap: () => Navigator.of(context).pushReplacementNamed('/products'),
+        ),
       ],
     ));
   }
