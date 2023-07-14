@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart.dart';
@@ -17,6 +19,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
     final cart = Provider.of<Cart>(context, listen: false);
+    final scaffoldMessengerContext = ScaffoldMessenger.of(context);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -39,12 +42,25 @@ class ProductItem extends StatelessWidget {
             },
           ),
           leading: IconButton(
-            color: Theme.of(context).colorScheme.secondary,
-            icon: product.isFavorite
-                ? const Icon(Icons.favorite)
-                : const Icon(Icons.favorite_outline),
-            onPressed: product.toggleFavorite,
-          ),
+              color: Theme.of(context).colorScheme.secondary,
+              icon: product.isFavorite
+                  ? const Icon(Icons.favorite)
+                  : const Icon(Icons.favorite_outline),
+              onPressed: () async {
+                try {
+                  await product.toggleFavorite();
+                } catch (error) {
+                  if (error is HttpException) {
+                    scaffoldMessengerContext.showSnackBar(SnackBar(
+                      content: Text('Failed to modify product'),
+                      action: SnackBarAction(
+                          label: 'DISMISS',
+                          onPressed: () =>
+                              scaffoldMessengerContext.hideCurrentSnackBar()),
+                    ));
+                  }
+                }
+              }),
           title: Text(
             product.title,
           ),

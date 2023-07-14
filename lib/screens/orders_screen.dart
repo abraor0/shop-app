@@ -4,8 +4,25 @@ import 'package:shop_app/providers/orders.dart' show Orders;
 import 'package:shop_app/widgets/main_drawer.dart';
 import '../widgets/order_item.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
+
+  @override
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    Provider.of<Orders>(context, listen: false).fetchOrders().then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +33,16 @@ class OrdersScreen extends StatelessWidget {
           title: const Text('Your orders'),
         ),
         drawer: MainDrawer(),
-        body: ListView.builder(
-          itemBuilder: (context, index) =>
-              OrderItem(order: orderData.orders[index]),
-          itemCount: orderData.orders.length,
-        ));
+        body: _isLoading
+            ? LinearProgressIndicator(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.secondary,
+                semanticsLabel: 'Fecthing products from server',
+              )
+            : ListView.builder(
+                itemBuilder: (context, index) =>
+                    OrderItem(order: orderData.orders[index]),
+                itemCount: orderData.orders.length,
+              ));
   }
 }

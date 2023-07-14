@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart.dart';
-import 'package:shop_app/providers/product.dart';
+import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/widgets/badge.dart';
 import 'package:shop_app/widgets/main_drawer.dart';
-import 'package:shop_app/widgets/product_item.dart';
 
 import '../widgets/products_grid.dart';
 
@@ -19,6 +18,19 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   FilterOptions _currentFilter = FilterOptions.all;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    Provider.of<Products>(context, listen: false)
+        .fetchProducts()
+        .then((_) => setState(
+              () {
+                _isLoading = false;
+              },
+            ));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +73,13 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: MainDrawer(),
-      body: ProductsGrid(_currentFilter),
+      body: _isLoading
+          ? LinearProgressIndicator(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
+              semanticsLabel: 'Fecthing products from server',
+            )
+          : ProductsGrid(_currentFilter),
     );
   }
 }

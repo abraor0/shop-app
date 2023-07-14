@@ -16,6 +16,10 @@ class CartItem {
   double get amount {
     return price * quantity;
   }
+
+  Map<String, dynamic> toMap() {
+    return {'id': id, 'price': price, 'title': title, 'quantity': quantity};
+  }
 }
 
 class Cart with ChangeNotifier {
