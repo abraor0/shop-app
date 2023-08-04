@@ -18,13 +18,21 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  String _authToken = '';
+  String _userId = '';
+
+  void updateAuth(String token, String userId) {
+    _authToken = token;
+    notifyListeners();
+  }
 
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchOrders() async {
-    final url = Uri.https(domain, '/orders.json');
+    final url =
+        Uri.https(domain, '/orders/$_userId.json', {'auth': _authToken});
     final data =
         json.decode((await http.get(url)).body) as Map<String, dynamic>?;
     if (data == null) return;
@@ -50,7 +58,8 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> products, double total) async {
-    final url = Uri.https(domain, '/orders.json');
+    final url =
+        Uri.https(domain, '/orders/$_userId.json', {'auth': _authToken});
     final dateTime = DateTime.now();
     final resp = await http.post(url,
         body: json.encode({

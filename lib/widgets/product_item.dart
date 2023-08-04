@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/product.dart';
 
@@ -19,6 +20,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
     final cart = Provider.of<Cart>(context, listen: false);
+    final auth = Provider.of<Auth>(context);
     final scaffoldMessengerContext = ScaffoldMessenger.of(context);
 
     return ClipRRect(
@@ -48,11 +50,11 @@ class ProductItem extends StatelessWidget {
                   : const Icon(Icons.favorite_outline),
               onPressed: () async {
                 try {
-                  await product.toggleFavorite();
+                  await product.toggleFavorite(auth.token!, auth.userId);
                 } catch (error) {
                   if (error is HttpException) {
                     scaffoldMessengerContext.showSnackBar(SnackBar(
-                      content: Text('Failed to modify product'),
+                      content: const Text('Failed to modify product'),
                       action: SnackBarAction(
                           label: 'DISMISS',
                           onPressed: () =>

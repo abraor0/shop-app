@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/orders.dart';
 import 'package:shop_app/providers/products.dart';
+import 'package:shop_app/screens/auth_screen.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
 import 'package:shop_app/screens/orders_screen.dart';
 import 'package:shop_app/screens/product_details_screen.dart';
+import 'package:shop_app/screens/splash_screen.dart';
 import 'package:shop_app/screens/user_products_screen.dart';
 
 import './screens/products_overview_screen.dart';
@@ -23,42 +26,66 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => Products(),
+          create: (context) => Auth(),
         ),
+        ChangeNotifierProxyProvider<Auth, Products>(
+            create: (context) => Products(),
+            update: (context, auth, previous) {
+              previous!.updateAuth(auth.token!, auth.userId);
+
+              return previous!;
+            }),
         ChangeNotifierProvider(
           create: (context) => Cart(),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<Auth, Orders>(
           create: (context) => Orders(),
-        )
-      ],
-      child: MaterialApp(
-        title: 'Shop app',
-        theme: ThemeData(
-          colorScheme: ThemeData.light().colorScheme.copyWith(
-                primary: Colors.deepPurple,
-                onSecondary: Colors.white,
-                onPrimary: Colors.white,
-                secondary: Colors.orange,
-              ),
-          brightness: Brightness.light,
-          textTheme: const TextTheme(),
-          iconButtonTheme: const IconButtonThemeData(
-            style: ButtonStyle(
-              iconColor: MaterialStatePropertyAll(Colors.white),
-            ),
-          ),
-          useMaterial3: false,
+          update: (context, auth, previous) {
+            previous!.updateAuth(auth.token!, auth.userId);
+
+            return previous;
+          },
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => ProductsOverviewScreen(),
-          '/product-details': (context) => ProductDetailScreen(),
-          '/cart': (context) => CartScreen(),
-          '/orders': (context) => OrdersScreen(),
-          '/products': (context) => UserProductsScreen(),
-          '/edit-product': (context) => EditProductScreen()
-        },
+      ],
+      child: Consumer<Auth>(
+        builder: (context, auth, child) => MaterialApp(
+          title: 'Shop app',
+          theme: ThemeData(
+            colorScheme: ThemeData.light().colorScheme.copyWith(
+                  primary: Colors.deepPurple,
+                  onSecondary: Colors.white,
+                  onPrimary: Colors.white,
+                  secondary: Colors.orange,
+                ),
+            brightness: Brightness.light,
+            textTheme: const TextTheme(),
+            iconButtonTheme: const IconButtonThemeData(
+              style: ButtonStyle(
+                iconColor: MaterialStatePropertyAll(Colors.white),
+              ),
+            ),
+            useMaterial3: false,
+          ),
+          home: auth.isLogged
+              ? ProductsOverviewScreen()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SplashScreen();
+                    } else {
+                      return AuthScreen();
+                    }
+                  },
+                ),
+          routes: {
+            '/product-details': (context) => ProductDetailScreen(),
+            '/cart': (context) => CartScreen(),
+            '/orders': (context) => OrdersScreen(),
+            '/products': (context) => UserProductsScreen(),
+            '/edit-product': (context) => EditProductScreen()
+          },
+        ),
       ),
     );
   }
