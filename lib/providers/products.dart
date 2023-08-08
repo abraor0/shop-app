@@ -34,8 +34,8 @@ class Products with ChangeNotifier {
     final query = filterByUser
         ? {
             'auth': _authToken,
-            'orderBy': 'creatorId',
-            'equalTo': _userId,
+            'orderBy': '"creatorId"',
+            'equalTo': '"$_userId"',
           }
         : {'auth': _authToken};
     final url = Uri.https(domain, '/products.json', query);

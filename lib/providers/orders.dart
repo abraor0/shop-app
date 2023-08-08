@@ -23,6 +23,7 @@ class Orders with ChangeNotifier {
 
   void updateAuth(String token, String userId) {
     _authToken = token;
+    _userId = userId;
     notifyListeners();
   }
 

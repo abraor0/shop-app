@@ -13,7 +13,7 @@ class Auth with ChangeNotifier {
   String _token = '';
   DateTime _expiryDate = DateTime.now();
   String _userId = '';
-  Timer? _authTimer = null;
+  Timer? _authTimer;
 
   bool get isLogged {
     return token != null;
@@ -90,6 +90,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<bool> tryAutoLogin() async {
+    print('chegou no autolgin');
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
       return false;
