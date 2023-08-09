@@ -69,12 +69,16 @@ class ProductItem extends StatelessWidget {
           backgroundColor: Colors.black87,
         ),
         child: GestureDetector(
-          onTap: () => directToDetails(context, product.id),
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
-          ),
-        ),
+            onTap: () => directToDetails(context, product.id),
+            child: Hero(
+              tag: product.id,
+              child: FadeInImage(
+                placeholder: const AssetImage(
+                    'lib/assets/images/product-placeholder.png'),
+                image: NetworkImage(product.imageUrl),
+                fit: BoxFit.cover,
+              ),
+            )),
       ),
     );
   }

@@ -27,7 +27,7 @@ class MainDrawer extends StatelessWidget {
         ListTile(
           title: Text('Shop'),
           leading: Icon(Icons.shop),
-          onTap: () => Navigator.of(context).pushReplacementNamed('/'),
+          onTap: () => Navigator.of(context).pushReplacementNamed('/shop'),
         ),
         ListTile(
           title: Text('Orders'),

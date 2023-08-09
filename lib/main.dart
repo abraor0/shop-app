@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/helpers/animated_page_route.dart';
 import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/orders.dart';
@@ -82,12 +83,23 @@ class MyApp extends StatelessWidget {
                     }
                   },
                 ),
-          routes: {
-            '/product-details': (context) => ProductDetailScreen(),
-            '/cart': (context) => CartScreen(),
-            '/orders': (context) => OrdersScreen(),
-            '/products': (context) => UserProductsScreen(),
-            '/edit-product': (context) => EditProductScreen()
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case '/shop':
+                return AnimatedPageRoute(page: ProductsOverviewScreen());
+              case '/product-details':
+                return AnimatedPageRoute(page: ProductDetailScreen());
+              case '/cart':
+                return AnimatedPageRoute(page: CartScreen());
+              case '/orders':
+                return AnimatedPageRoute(page: OrdersScreen());
+              case '/products':
+                return AnimatedPageRoute(page: UserProductsScreen());
+              case '/edit-product':
+                return AnimatedPageRoute(page: EditProductScreen());
+              default:
+                return AnimatedPageRoute(page: SplashScreen());
+            }
           },
         ),
       ),
